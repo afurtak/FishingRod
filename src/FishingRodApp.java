@@ -30,14 +30,24 @@ public class FishingRodApp {
             Logger logger = Logger.getLogger(GlobalScreen.class.getPackage().getName());
             logger.setLevel(Level.WARNING);
 
-            HotkeyListener hotkeyListener = () -> {
+            HotkeyListener hotkeyListenerOpenClose = () -> {
                 if (!FishCreatorWindow.isWindowOpen)
                     FishCreatorWindow.openWindow();
                 else
                     FishCreatorWindow.closeWindow();
             };
+
+            HotkeyListener hotkeyListenerClose = () -> {
+                if (FishCreatorWindow.isWindowOpen)
+                    FishCreatorWindow.closeWindow();
+            };
+
             GlobalScreen.addNativeKeyListener(
-                    new GlobalHotkeyHandler(new int[]{NativeKeyEvent.VC_A, NativeKeyEvent.VC_ALT}, hotkeyListener));
+                    new GlobalHotkeyHandler(
+                            new int[][]{{NativeKeyEvent.VC_A, NativeKeyEvent.VC_ALT}, {NativeKeyEvent.VC_ESCAPE}},
+                            new HotkeyListener[] {hotkeyListenerOpenClose, hotkeyListenerClose}
+                    )
+            );
         }
         catch (NativeHookException e) {
             e.printStackTrace();
