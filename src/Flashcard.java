@@ -24,13 +24,13 @@ public class Flashcard {
     }
 
     /**
+     * @param id flashcard in database
      * @param obverse obverse of flashcard.
      * @param reverse reverse of flashcard.
      * @param timesOfRepetition times of repetition of this flashcard.
      *                          the bigger, the lower probability to repeat it again.
-     * @param id flashcard in database
      */
-    public Flashcard(String obverse, String reverse, int timesOfRepetition, int id) {
+    public Flashcard(int id, String obverse, String reverse, int timesOfRepetition) {
         this.obverse = obverse;
         this.reverse = reverse;
         this.timesOfRepetition = timesOfRepetition;

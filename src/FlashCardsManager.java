@@ -1,5 +1,7 @@
 import java.io.File;
+import java.lang.ref.SoftReference;
 import java.sql.*;
+import java.util.ArrayList;
 
 /**
  * Singleton class, using to communication with data base.
@@ -42,8 +44,7 @@ public class FlashCardsManager {
      * @throws SQLException
      */
     public void saveFlashCard(Flashcard flashcard) throws SQLException {
-        ResultSet tables = connection.getMetaData().getTables(null, null, tableName, null);
-        if (tables.next()) {
+        if (existsTableWithFlashcards()) {
             String sqlQuery = getSqlQueryAddingFlashCard(flashcard);
             statement.executeUpdate(sqlQuery);
         }
@@ -56,6 +57,37 @@ public class FlashCardsManager {
                             "timesOfRepetition INT);");
             saveFlashCard(flashcard);
         }
+    }
+
+    /**
+     * @return ArrayList of fleshcards stored in database.
+     * @throws SQLException
+     */
+    public ArrayList<Flashcard> readFlashcards() throws SQLException {
+        ArrayList<Flashcard> flashcards = new ArrayList<>();
+
+        if (existsTableWithFlashcards()) {
+            ResultSet sqlResult = statement.executeQuery("SELECT * FROM " + tableName);
+
+            while (sqlResult.next()) {
+                Flashcard nextFlashcard = new Flashcard(
+                    sqlResult.getInt(1),
+                    sqlResult.getString(2),
+                    sqlResult.getString(3),
+                    sqlResult.getInt(4)
+                );
+
+                flashcards.add(nextFlashcard);
+            }
+        }
+
+        return new ArrayList<>();
+
+    }
+
+    private boolean existsTableWithFlashcards() throws SQLException {
+        ResultSet tables = connection.getMetaData().getTables(null, null, tableName, null);
+        return tables.next();
     }
 
     /**
