@@ -29,8 +29,8 @@ public class FlashCardsManager {
     }
 
     private String getSqlQueryAddingFlashCard(Flashcard flashcard) {
-        return "INSERT INTO " + tableName + " (obverse, reverse, timesOfRepetition) " +
-                "VALUES ('" + flashcard.getObverse() + "', '" + flashcard.getReverse() +
+        return "INSERT INTO " + tableName + " (id, obverse, reverse, timesOfRepetition) " +
+                "VALUES ((SELECT MAX(ID) + 1 FROM " + tableName + "), '" + flashcard.getObverse() + "', '" + flashcard.getReverse() +
                 "', " + flashcard.getTimesOfRepetition() + ");";
     }
 
@@ -50,6 +50,7 @@ public class FlashCardsManager {
         else {
             statement.executeUpdate(
                     "CREATE TABLE " + tableName + " (" +
+                            "id INT IDENTITY(1, 1)," +
                             "obverse TEXT," +
                             "reverse TEXT," +
                             "timesOfRepetition INT);");
