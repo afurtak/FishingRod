@@ -2,6 +2,7 @@ import javax.swing.*;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.sql.SQLException;
 
 /**
  * @author Adam Furtak 21-03-2018
@@ -41,8 +42,8 @@ public class FishCreatorWindow extends JFrame {
      *
      */
     private void createGUI() {
-        createAndAddInputReverse();
         createAndAddInputObverse();
+        createAndAddInputReverse();
         createAndAddAddButton();
     }
 
@@ -52,12 +53,14 @@ public class FishCreatorWindow extends JFrame {
         addButton.addActionListener((actionEvent) -> {
             if (!inputObverse.getText().equals("") && !inputReverse.getText().equals("")) {
                 Flashcard flashcard = new Flashcard(inputObverse.getText(), inputReverse.getText(), 0);
+
                 try {
-                    flashcard.saveFlashcard(Flashcard.pathToFile);
+                    FlashCardsManager.getInstance().saveFlashCard(flashcard);
                 }
-                catch (Exception e) {
+                catch (SQLException e) {
                     e.printStackTrace();
                 }
+
                 inputReverse.setText("");
                 inputObverse.setText("");
             }
