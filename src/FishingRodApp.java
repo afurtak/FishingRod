@@ -49,7 +49,7 @@ public class FishingRodApp {
 
             GlobalScreen.addNativeKeyListener(
                     new GlobalHotkeyHandler(
-                            new int[][] {{NativeKeyEvent.VC_A, NativeKeyEvent.VC_ALT}, {NativeKeyEvent.VC_ESCAPE}, {NativeKeyEvent.VC_ENTER}},
+                            new int[][] {{NativeKeyEvent.VC_SPACE, NativeKeyEvent.VC_CONTROL, NativeKeyEvent.VC_SHIFT}, {NativeKeyEvent.VC_ESCAPE}, {NativeKeyEvent.VC_ENTER}},
                             new HotkeyListener[] {hotkeyListenerOpenClose, hotkeyListenerClose, hotkeyListenerEnter}
                     )
             );

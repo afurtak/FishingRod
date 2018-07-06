@@ -1,0 +1,10 @@
+<component name="ArtifactManager">
+  <artifact type="jar" build-on-make="true" name="FishingRod:jar">
+    <output-path>$PROJECT_DIR$/out/artifacts/FishingRod_jar</output-path>
+    <root id="archive" name="FishingRod.jar">
+      <element id="module-output" name="FishingRod" />
+      <element id="extracted-dir" path="$PROJECT_DIR$/libs/sqlite-jdbc-3.23.1.jar" path-in-jar="/" />
+      <element id="extracted-dir" path="$PROJECT_DIR$/libs/jnativehook-2.1.0.jar" path-in-jar="/" />
+    </root>
+  </artifact>
+</component>

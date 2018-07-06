@@ -49,6 +49,17 @@ public class FishCreatorWindow extends JFrame {
         });
 
         createGUI();
+
+        /*
+        requests focus on JTextField
+         */
+        addWindowListener(new WindowAdapter() {
+            @Override
+            public void windowOpened(WindowEvent e) {
+                super.windowOpened(e);
+                inputObverse.requestFocusInWindow();
+            }
+        });
     }
 
     /**
@@ -117,6 +128,7 @@ public class FishCreatorWindow extends JFrame {
     private void createAndAddInputObverse() {
         inputObverse = new JTextField();
         inputObverse.setPreferredSize(new Dimension(200, 300));
+        inputObverse.requestFocus();
         add(inputObverse);
     }
 
@@ -141,6 +153,7 @@ public class FishCreatorWindow extends JFrame {
      */
     public static void openWindow() {
         getInstance().setVisible(true);
+        getInstance().inputObverse.requestFocusInWindow();
         isWindowOpen = true;
     }
 
