@@ -1,5 +1,6 @@
 import javax.swing.*;
 import java.awt.*;
+import java.awt.event.*;
 import java.sql.SQLException;
 
 /**
@@ -32,6 +33,18 @@ public class FishCreatorWindow extends JFrame {
 
         setAlwaysOnTop(true);
         setUndecorated(true);
+
+        addWindowFocusListener(new WindowFocusListener() {
+            @Override
+            public void windowGainedFocus(WindowEvent e) {
+
+            }
+
+            @Override
+            public void windowLostFocus(WindowEvent e) {
+                closeWindow();
+            }
+        });
 
         createGUI();
     }
