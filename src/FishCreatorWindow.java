@@ -50,21 +50,25 @@ public class FishCreatorWindow extends JFrame {
 
         addButton.addActionListener((actionEvent) -> {
             if (!inputObverse.getText().equals("") && !inputReverse.getText().equals("")) {
-                Flashcard flashcard = new Flashcard(inputObverse.getText(), inputReverse.getText(), 0);
-
-                try {
-                    FlashCardsManager.getInstance().saveFlashCard(flashcard);
-                }
-                catch (SQLException e) {
-                    e.printStackTrace();
-                }
-
-                inputReverse.setText("");
-                inputObverse.setText("");
+                addFlashcard();
             }
         });
 
         add(addButton);
+    }
+
+    public void addFlashcard() {
+        Flashcard flashcard = new Flashcard(inputObverse.getText(), inputReverse.getText(), 0);
+
+        try {
+            FlashCardsManager.getInstance().saveFlashCard(flashcard);
+        }
+        catch (SQLException e) {
+            e.printStackTrace();
+        }
+
+        inputReverse.setText("");
+        inputObverse.setText("");
     }
 
     private void createAndAddInputObverse() {

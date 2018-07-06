@@ -42,10 +42,15 @@ public class FishingRodApp {
                     FishCreatorWindow.closeWindow();
             };
 
+            HotkeyListener hotkeyListenerEnter = () -> {
+                if (FishCreatorWindow.isWindowOpen)
+                    FishCreatorWindow.getInstance().addFlashcard();
+            };
+
             GlobalScreen.addNativeKeyListener(
                     new GlobalHotkeyHandler(
-                            new int[][]{{NativeKeyEvent.VC_A, NativeKeyEvent.VC_ALT}, {NativeKeyEvent.VC_ESCAPE}},
-                            new HotkeyListener[] {hotkeyListenerOpenClose, hotkeyListenerClose}
+                            new int[][] {{NativeKeyEvent.VC_A, NativeKeyEvent.VC_ALT}, {NativeKeyEvent.VC_ESCAPE}, {NativeKeyEvent.VC_ENTER}},
+                            new HotkeyListener[] {hotkeyListenerOpenClose, hotkeyListenerClose, hotkeyListenerEnter}
                     )
             );
         }
