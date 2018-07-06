@@ -1,5 +1,5 @@
 /**
- * @author Adam FurtakIOException
+ * @author Adam Furtak
  *
  * Flashcard representation
  */

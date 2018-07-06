@@ -15,10 +15,12 @@ public class FishCreatorWindow extends JFrame {
     private  JTextField inputReverse;
     private JTextField inputObverse;
     private JButton addButton;
+    private JComboBox<Object> flashcardSetComboBox;
 
     private FishCreatorWindow() {
         super("Fishing Rood App");
-        setLayout(new GridLayout(3, 1));
+        setLayout(new GridLayout(4, 1));
+
         setVisible(false);
         setDefaultCloseOperation(JFrame.HIDE_ON_CLOSE);
 
@@ -53,9 +55,37 @@ public class FishCreatorWindow extends JFrame {
      *
      */
     private void createGUI() {
+        createAndAddFlashcardSetComboBox();
         createAndAddInputObverse();
         createAndAddInputReverse();
         createAndAddAddButton();
+    }
+
+    private void createAndAddFlashcardSetComboBox() {
+        JPanel panel = new JPanel();
+        panel.setLayout(new GridLayout(1, 2));
+        try {
+            flashcardSetComboBox = new JComboBox<>(FlashCardsManager.getInstance().getAllFlashcardsSets().toArray());
+            panel.add(flashcardSetComboBox);
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        JButton addSetButton = new JButton("+");
+        addSetButton.addActionListener((actionEvent) -> openAddNewSetWidnow());
+        panel.add(addSetButton);
+        add(panel);
+    }
+
+    private void openAddNewSetWidnow() {
+        new AddNewSetWindow();
+    }
+
+    void updateFlashcardsSet() {
+        try {
+            flashcardSetComboBox.setModel(new DefaultComboBoxModel<>(FlashCardsManager.getInstance().getAllFlashcardsSets().toArray()));
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
     }
 
     private void createAndAddAddButton() {
@@ -74,7 +104,7 @@ public class FishCreatorWindow extends JFrame {
         Flashcard flashcard = new Flashcard(inputObverse.getText(), inputReverse.getText(), 0);
 
         try {
-            FlashCardsManager.getInstance().saveFlashCard(flashcard);
+            FlashCardsManager.getInstance().saveFlashCard(flashcard, (String) flashcardSetComboBox.getSelectedItem());
         }
         catch (SQLException e) {
             e.printStackTrace();
@@ -121,5 +151,39 @@ public class FishCreatorWindow extends JFrame {
         getInstance().dispose();
         isWindowOpen = false;
     }
+}
 
+class AddNewSetWindow extends JFrame {
+    JTextField inputNameOfSet;
+    JButton createSetButton;
+
+    public AddNewSetWindow() {
+        super("Add new set");
+        setVisible(true);
+        setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
+        setAlwaysOnTop(true);
+        setLayout(new GridLayout(2, 1));
+        setSize(150, 200);
+        createGUI();
+    }
+
+    void createGUI() {
+        inputNameOfSet = new JTextField();
+        add(inputNameOfSet);
+
+        createSetButton = new JButton("CREATE");
+        createSetButton.addActionListener((a) -> {
+            if (!inputNameOfSet.equals("")) {
+                try {
+                    FlashCardsManager.getInstance().createNewFlashcardsSet(inputNameOfSet.getText());
+                } catch (SQLException e) {
+                    e.printStackTrace();
+                }
+                FishCreatorWindow.getInstance().updateFlashcardsSet();
+                FishCreatorWindow.openWindow();
+                dispose();
+            }
+        });
+        add(createSetButton);
+    }
 }
