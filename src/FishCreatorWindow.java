@@ -127,7 +127,7 @@ public class FishCreatorWindow extends JFrame {
     }
 
     /**
-     * @return only instance of FishCreatorWindow.FishCreatorWindow class.
+     * @return only instance of FishCreatorWindow class.
      *          In case if instance is null (doesn't exist yet), creates it.
      */
     public static FishCreatorWindow getInstance() {
@@ -137,7 +137,7 @@ public class FishCreatorWindow extends JFrame {
     }
 
     /**
-     * Makes window (FishCreatorWindow.FishCreatorWindow object) visible.
+     * Makes window (FishCreatorWindow object) visible.
      */
     public static void openWindow() {
         getInstance().setVisible(true);
@@ -145,7 +145,7 @@ public class FishCreatorWindow extends JFrame {
     }
 
     /**
-     * Makes window (FishCreatorWindow.FishCreatorWindow object) invisible.
+     * Makes window (FishCreatorWindow object) invisible.
      */
     public static void closeWindow() {
         getInstance().dispose();
