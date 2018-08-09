@@ -12,8 +12,11 @@ public class FlashCardsManager {
     private static String pathToDataBase;
     private static String dataBaseUrl;
 
+    private static String setTableName = "Sets";
+    private static String flashcardsTableName = "Flashcards";
+
     static {
-        pathToDataBase = System.getProperty("user.home") + "/.FishingRod/flashcards.db";
+        pathToDataBase = System.getProperty("user.home") + "/.FishingRod/fishingrod.db";
         File file = new File(System.getProperty("user.home") + "/.FishingRod");
         if (!file.exists())
             file.mkdirs();
@@ -23,16 +26,25 @@ public class FlashCardsManager {
     private Connection connection;
     private Statement statement;
 
+
     private FlashCardsManager() throws SQLException {
         connection = DriverManager.getConnection(dataBaseUrl);
         statement = connection.createStatement();
     }
 
-    private String getSqlQueryAddingFlashCard(Flashcard flashcard, String flashcardsSet) {
-        return "INSERT INTO " + flashcardsSet + " (obverse, reverse, timesOfRepetition) " +
+
+    private String getSqlQueryAddingFlashCard(Flashcard flashcard, int setId) {
+        return "INSERT INTO " + flashcardsTableName + " (obverse, reverse, timesOfRepetition, setId) " +
                 "VALUES ('" + flashcard.getObverse() + "', '" + flashcard.getReverse() +
-                "', " + flashcard.getTimesOfRepetition() + ");";
+                "', " + flashcard.getTimesOfRepetition() + ", " + Integer.toString(setId) + ");";
     }
+
+
+    private String getSqlQueryAddingFlashcardSet(String setName) {
+        return "INSERT INTO " + setTableName + " (name) " +
+                "VALUES ('" + setName + "');";
+    }
+
 
     /**
      * Saves given flashcard in database.
@@ -42,15 +54,25 @@ public class FlashCardsManager {
      * @throws SQLException
      */
     public void saveFlashCard(Flashcard flashcard, String flashcardsSet) throws SQLException {
-        if (existsTableWithFlashcards(flashcardsSet)) {
-            String sqlQuery = getSqlQueryAddingFlashCard(flashcard, flashcardsSet);
+        if (existsTableWithFlashcards()) {
+            String sqlQuery = getSqlQueryAddingFlashCard(flashcard, getSetsId(flashcardsSet));
+            System.out.println(sqlQuery);
             statement.executeUpdate(sqlQuery);
         }
         else {
-            createNewFlashcardsSet(flashcardsSet);
+            addFlashCardsTable();
             saveFlashCard(flashcard, flashcardsSet);
         }
     }
+
+
+    private int getSetsId(String flashcardsSet) throws SQLException {
+        ResultSet result = statement.executeQuery("SELECT id FROM " + setTableName + " WHERE name LIKE \'" + flashcardsSet +"\'");
+        if (result.next())
+            return result.getInt(1);
+        throw new SQLException();
+    }
+
 
     /**
      * Creates new table in database represents new flashcards set.
@@ -59,12 +81,35 @@ public class FlashCardsManager {
      * @throws SQLException
      */
     public void createNewFlashcardsSet(String flashcardsSet) throws SQLException {
+        if (existsTableWithSets())
+            statement.executeUpdate(getSqlQueryAddingFlashcardSet(flashcardsSet));
+        else {
+            addSetsTable();
+            createNewFlashcardsSet(flashcardsSet);
+        }
+    }
+
+    private void addSetsTable() throws SQLException {
         statement.executeUpdate(
-                "CREATE TABLE " + flashcardsSet + " (" +
+                "CREATE TABLE Sets (" +
                         "id  INTEGER PRIMARY KEY AUTOINCREMENT," +
-                        "obverse TEXT," +
-                        "reverse TEXT," +
-                        "timesOfRepetition INTEGER);");
+                        "name TEXT);");
+    }
+
+    private void addFlashCardsTable() throws SQLException {
+        if (existsTableWithSets()) {
+            statement.executeUpdate(
+                    "CREATE TABLE FlashCards (" +
+                            "id  INTEGER PRIMARY KEY AUTOINCREMENT," +
+                            "obverse TEXT," +
+                            "reverse TEXT," +
+                            "timesOfRepetition INTEGER, " +
+                            "setId INTEGER);");
+        }
+        else {
+            addSetsTable();
+            addFlashCardsTable();
+        }
     }
 
     /**
@@ -74,7 +119,7 @@ public class FlashCardsManager {
     public ArrayList<Flashcard> readFlashcards(String flashcardsSet) throws SQLException {
         ArrayList<Flashcard> flashcards = new ArrayList<>();
 
-        if (existsTableWithFlashcards(flashcardsSet)) {
+        if (existsTableWithFlashcards()) {
             ResultSet sqlResult = statement.executeQuery("SELECT * FROM " + flashcardsSet);
 
             while (sqlResult.next()) {
@@ -93,24 +138,35 @@ public class FlashCardsManager {
     }
 
 
-
     /**
      * @return ArrayList names of every tables included to database.
      * @throws SQLException
      */
-    public ArrayList<String> getAllFlashcardsSets() throws SQLException {
-        ResultSet tables = connection.getMetaData().getTables(null, null, "%", null);
-        ArrayList<String> result = new ArrayList<>();
-        while (tables.next()) {
-            result.add(tables.getString(3));
+    public ArrayList<String> getAllFlashcardsSetsNames() throws SQLException {
+        ArrayList<String> setsNames = new ArrayList<>();
+        if (existsTableWithSets()) {
+
+            ResultSet result = statement.executeQuery("SELECT DISTINCT name FROM " + setTableName);
+
+            while (result.next()) {
+                setsNames.add(result.getString(1));
+            }
         }
-        return result;
+        return setsNames;
     }
 
-    private boolean existsTableWithFlashcards(String flashcardsSet) throws SQLException {
-        ResultSet tables = connection.getMetaData().getTables(null, null, flashcardsSet, null);
+
+    private boolean existsTableWithFlashcards() throws SQLException {
+        ResultSet tables = connection.getMetaData().getTables(null, null, flashcardsTableName, null);
         return tables.next();
     }
+
+
+    private boolean existsTableWithSets() throws SQLException {
+        ResultSet tables = connection.getMetaData().getTables(null, null, setTableName, null);
+        return tables.next();
+    }
+
 
     /**
      * @return only instance of FlashCardsManager. In case the instance doesn't exist, creates one.

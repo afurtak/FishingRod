@@ -76,7 +76,7 @@ public class FishCreatorWindow extends JFrame {
         JPanel panel = new JPanel();
         panel.setLayout(new GridLayout(1, 2));
         try {
-            flashcardSetComboBox = new JComboBox<>(FlashCardsManager.getInstance().getAllFlashcardsSets().toArray());
+            flashcardSetComboBox = new JComboBox<>(FlashCardsManager.getInstance().getAllFlashcardsSetsNames().toArray());
             panel.add(flashcardSetComboBox);
         } catch (SQLException e) {
             e.printStackTrace();
@@ -93,7 +93,7 @@ public class FishCreatorWindow extends JFrame {
 
     void updateFlashcardsSet() {
         try {
-            flashcardSetComboBox.setModel(new DefaultComboBoxModel<>(FlashCardsManager.getInstance().getAllFlashcardsSets().toArray()));
+            flashcardSetComboBox.setModel(new DefaultComboBoxModel<>(FlashCardsManager.getInstance().getAllFlashcardsSetsNames().toArray()));
         } catch (SQLException e) {
             e.printStackTrace();
         }
