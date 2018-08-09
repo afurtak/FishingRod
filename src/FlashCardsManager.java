@@ -40,9 +40,53 @@ public class FlashCardsManager {
     }
 
 
+    private boolean existsTableWithFlashcards() throws SQLException {
+        ResultSet tables = connection.getMetaData().getTables(null, null, flashcardsTableName, null);
+        return tables.next();
+    }
+
+
+    private boolean existsTableWithSets() throws SQLException {
+        ResultSet tables = connection.getMetaData().getTables(null, null, setTableName, null);
+        return tables.next();
+    }
+
+
     private String getSqlQueryAddingFlashcardSet(String setName) {
         return "INSERT INTO " + setTableName + " (name) " +
                 "VALUES ('" + setName + "');";
+    }
+
+
+    private int getSetsId(String flashcardsSet) throws SQLException {
+        ResultSet result = statement.executeQuery("SELECT id FROM " + setTableName + " WHERE name LIKE \'" + flashcardsSet +"\'");
+        if (result.next())
+            return result.getInt(1);
+        throw new SQLException();
+    }
+
+
+    private void addSetsTable() throws SQLException {
+        statement.executeUpdate(
+                "CREATE TABLE Sets (" +
+                        "id  INTEGER PRIMARY KEY AUTOINCREMENT," +
+                        "name TEXT);");
+    }
+
+    private void addFlashCardsTable() throws SQLException {
+        if (existsTableWithSets()) {
+            statement.executeUpdate(
+                    "CREATE TABLE FlashCards (" +
+                            "id  INTEGER PRIMARY KEY AUTOINCREMENT," +
+                            "obverse TEXT," +
+                            "reverse TEXT," +
+                            "timesOfRepetition INTEGER, " +
+                            "setId INTEGER);");
+        }
+        else {
+            addSetsTable();
+            addFlashCardsTable();
+        }
     }
 
 
@@ -66,14 +110,6 @@ public class FlashCardsManager {
     }
 
 
-    private int getSetsId(String flashcardsSet) throws SQLException {
-        ResultSet result = statement.executeQuery("SELECT id FROM " + setTableName + " WHERE name LIKE \'" + flashcardsSet +"\'");
-        if (result.next())
-            return result.getInt(1);
-        throw new SQLException();
-    }
-
-
     /**
      * Creates new table in database represents new flashcards set.
      *
@@ -86,29 +122,6 @@ public class FlashCardsManager {
         else {
             addSetsTable();
             createNewFlashcardsSet(flashcardsSet);
-        }
-    }
-
-    private void addSetsTable() throws SQLException {
-        statement.executeUpdate(
-                "CREATE TABLE Sets (" +
-                        "id  INTEGER PRIMARY KEY AUTOINCREMENT," +
-                        "name TEXT);");
-    }
-
-    private void addFlashCardsTable() throws SQLException {
-        if (existsTableWithSets()) {
-            statement.executeUpdate(
-                    "CREATE TABLE FlashCards (" +
-                            "id  INTEGER PRIMARY KEY AUTOINCREMENT," +
-                            "obverse TEXT," +
-                            "reverse TEXT," +
-                            "timesOfRepetition INTEGER, " +
-                            "setId INTEGER);");
-        }
-        else {
-            addSetsTable();
-            addFlashCardsTable();
         }
     }
 
@@ -153,18 +166,6 @@ public class FlashCardsManager {
             }
         }
         return setsNames;
-    }
-
-
-    private boolean existsTableWithFlashcards() throws SQLException {
-        ResultSet tables = connection.getMetaData().getTables(null, null, flashcardsTableName, null);
-        return tables.next();
-    }
-
-
-    private boolean existsTableWithSets() throws SQLException {
-        ResultSet tables = connection.getMetaData().getTables(null, null, setTableName, null);
-        return tables.next();
     }
 
 
