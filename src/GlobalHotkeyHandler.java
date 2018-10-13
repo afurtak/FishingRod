@@ -10,6 +10,7 @@ import org.jnativehook.keyboard.NativeKeyListener;
 public class GlobalHotkeyHandler implements NativeKeyListener {
     private int[][] hotkey;
     private boolean[][] pressedKeys;
+    private int[] counters;
     private HotkeyListener[] hotkeyListener;
 
     /**
@@ -21,6 +22,7 @@ public class GlobalHotkeyHandler implements NativeKeyListener {
         this.hotkey = new int[][] { hotKey };
         this.hotkeyListener = new HotkeyListener[] { hotkeyListener };
         pressedKeys = new boolean[][] { new boolean[hotKey.length] };
+        counters = new int[1];
 
         for (int i = 0; i < pressedKeys[0].length; i++)
             pressedKeys[0][i] = false;
@@ -40,6 +42,7 @@ public class GlobalHotkeyHandler implements NativeKeyListener {
         this.hotkey = hotKey;
         this.hotkeyListener = hotkeyListener;
         pressedKeys = new boolean[hotKey.length][];
+        counters = new int[hotKey.length];
 
         for (int i = 0; i < pressedKeys.length; i++) {
             pressedKeys[i] = new boolean[hotKey[i].length];
@@ -50,26 +53,31 @@ public class GlobalHotkeyHandler implements NativeKeyListener {
 
     @Override
     public void nativeKeyTyped(NativeKeyEvent e) {
-        for (int i = 0; i < hotkey.length; i++)
-            if (isHotkeyPressed(i))
-                hotkeyListener[i].hotkeyPressed();
     }
 
     @Override
     public void nativeKeyPressed(NativeKeyEvent e) {
         for (int i = 0; i < hotkey.length; i++)
             for (int j = 0; j < hotkey[i].length; j++) {
-                if (e.getKeyCode() == hotkey[i][j])
+                if (e.getKeyCode() == hotkey[i][j]) {
                     pressedKeys[i][j] = true;
+                    counters[i]++;
+                }
             }
     }
 
     @Override
     public void nativeKeyReleased(NativeKeyEvent e) {
         for (int i = 0; i < hotkey.length; i++)
+            if (isHotkeyPressed(i))
+                hotkeyListener[i].hotkeyPressed();
+
+        for (int i = 0; i < hotkey.length; i++)
             for (int j = 0; j < hotkey[i].length; j++) {
-                if (e.getKeyCode() == hotkey[i][j])
+                if (e.getKeyCode() == hotkey[i][j]) {
                     pressedKeys[i][j] = false;
+                    counters[i]--;
+                }
             }
     }
 
@@ -78,9 +86,6 @@ public class GlobalHotkeyHandler implements NativeKeyListener {
      *         Otherwise returns false.
      */
     private boolean isHotkeyPressed(int i) {
-        for (boolean pressedKey : pressedKeys[i])
-            if (!pressedKey)
-                return false;
-        return true;
+        return counters[i] == hotkey[i].length;
     }
 }
