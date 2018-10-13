@@ -47,6 +47,10 @@ public class SystemTrayManager {
         quit.addActionListener(actionEvent -> System.exit(0));
         menu.add(quit);
 
+        MenuItem learn = new MenuItem("Learn");
+        learn.addActionListener(actionEvent -> new LearningWindow());
+        menu.add(learn);
+
         return menu;
     }
 

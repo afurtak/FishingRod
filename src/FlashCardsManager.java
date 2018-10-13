@@ -129,26 +129,32 @@ public class FlashCardsManager {
      * @return ArrayList of fleshcards stored in database.
      * @throws SQLException
      */
-    public ArrayList<Flashcard> readFlashcards(String flashcardsSet) throws SQLException {
+    public Flashcard[] readFlashcards(String flashcardsSet) throws SQLException {
         ArrayList<Flashcard> flashcards = new ArrayList<>();
 
         if (existsTableWithFlashcards()) {
-            ResultSet sqlResult = statement.executeQuery("SELECT * FROM " + flashcardsSet);
+            ResultSet sqlResult = statement.executeQuery("SELECT * FROM " + flashcardsTableName + " WHERE SetId = " + getSetsId(flashcardsSet) + ";");
 
             while (sqlResult.next()) {
                 Flashcard nextFlashcard = new Flashcard(
-                    sqlResult.getInt(1),
-                    sqlResult.getString(2),
-                    sqlResult.getString(3),
-                    sqlResult.getInt(4)
+                        sqlResult.getInt(1),
+                        sqlResult.getString(2),
+                        sqlResult.getString(3),
+                        sqlResult.getInt(4)
                 );
 
                 flashcards.add(nextFlashcard);
             }
         }
 
-        return flashcards;
+        Flashcard[] flashcardsArray = new Flashcard[flashcards.size()];
+        for (int i = 0; i < flashcards.size(); i++) {
+            flashcardsArray[i] = flashcards.get(i);
+        }
+
+        return flashcardsArray;
     }
+
 
 
     /**
