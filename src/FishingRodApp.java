@@ -28,7 +28,7 @@ public class FishingRodApp {
         try {
             GlobalScreen.registerNativeHook();
             Logger logger = Logger.getLogger(GlobalScreen.class.getPackage().getName());
-            logger.setLevel(Level.WARNING);
+            logger.setLevel(Level.OFF);
 
             HotkeyListener hotkeyListenerOpenClose = () -> {
                 if (!FishCreatorWindow.isWindowOpen)
