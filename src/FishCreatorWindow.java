@@ -15,6 +15,8 @@ public class FishCreatorWindow extends JFrame {
     private  JTextField inputReverse;
     private JTextField inputObverse;
     private JButton addButton;
+    private JPanel chooseSetPanel;
+    private JButton openLearningWindowButton;
     private JComboBox<Object> flashcardSetComboBox;
 
     private FishCreatorWindow() {
@@ -67,24 +69,34 @@ public class FishCreatorWindow extends JFrame {
      */
     private void createGUI() {
         createAndAddFlashcardSetComboBox();
+        createAndAddOpenLearningWindowButton();
         createAndAddInputObverse();
         createAndAddInputReverse();
         createAndAddAddButton();
     }
 
+    private void createAndAddOpenLearningWindowButton() {
+        openLearningWindowButton = new JButton("Learn");
+        openLearningWindowButton.addActionListener((actionEvent) -> {
+            FishCreatorWindow.closeWindow();
+            new LearningWindow();
+        });
+        chooseSetPanel.add(openLearningWindowButton);
+    }
+
     private void createAndAddFlashcardSetComboBox() {
-        JPanel panel = new JPanel();
-        panel.setLayout(new GridLayout(1, 2));
+        chooseSetPanel = new JPanel();
+        chooseSetPanel.setLayout(new GridLayout(1, 3));
         try {
             flashcardSetComboBox = new JComboBox<>(FlashCardsManager.getInstance().getAllFlashcardsSetsNames().toArray());
-            panel.add(flashcardSetComboBox);
+            chooseSetPanel.add(flashcardSetComboBox);
         } catch (SQLException e) {
             e.printStackTrace();
         }
         JButton addSetButton = new JButton("+");
         addSetButton.addActionListener((actionEvent) -> openAddNewSetWidnow());
-        panel.add(addSetButton);
-        add(panel);
+        chooseSetPanel.add(addSetButton);
+        add(chooseSetPanel);
     }
 
     private void openAddNewSetWidnow() {
