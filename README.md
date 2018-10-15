@@ -15,7 +15,7 @@ Creates own folder in home directory named .FishingRod where saves database with
 Operating system: Windows, Linux <br />
 Fishing rod requires also installed Java Virtual Machine.
 
-## Installation
+## Run
 1) Download jar file from https://github.com/afurtak/FishingRod/releases/download/v0.1-alpha/FishingRod.jar
 2) Linux: <br />java -jar FishingRod.jar <br /> Windows 10: <br />double click on jar file.
 3) It is recommended to add Fishing Rod to autorun to your system.
