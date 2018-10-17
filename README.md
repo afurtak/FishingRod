@@ -2,10 +2,9 @@
 Application to create sets of flashcards and learn.
 
 ## Features
-Application runs in background. Can be called any time by press shortcut (Shift + Ctrl + Space)
+Application runs in background. Window with possibility to add flashcards can called any time by pressing shortcut (Shift + Ctrl + Space)
 or by clicking on corresponding icon in system tray.  <br />
-After call should be shown window with possibility to add new flashcard, set of flashcards
-or open window to learning from flashcards.
+Also it is possible to run "learning window" with currently existing flashcards from choosen set.
 
 ## How it works
 Application uses JNativeHook to capture shortcuts without focus on particular window.<br />
